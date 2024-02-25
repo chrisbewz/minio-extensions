@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from minio import Minio
 
 class Provider(ABC):
     __endpoint: str
@@ -13,10 +13,6 @@ class Provider(ABC):
     
     @abstractmethod
     def configure_client(self) -> None:
-        raise NotImplementedError
-    
-    @abstractmethod
-    def ping(self) -> None:
         raise NotImplementedError
     
     @property
