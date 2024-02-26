@@ -22,7 +22,7 @@ setup(
     description="MinIO Python Extension Package for S3 Storage Operations",
     author="Christian Celso Bewzenko",
     url="https://github.com/chrisbewz/minio-extensions",
-    #download_url="https://github.com/chrisbewz/minio-extensions/releases",
+    download_url="https://github.com/chrisbewz/minio-extensions/releases",
     author_email="crisbewz@gmail.com",
     version=version,
     long_description_content_type="text/markdown",
