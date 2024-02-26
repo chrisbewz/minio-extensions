@@ -15,3 +15,5 @@ from .metadata.metadata import (
 )
 
 from .extensions import MinioExtensions
+
+__version__ = "1.0.0"
