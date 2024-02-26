@@ -18,7 +18,7 @@ with codecs.open("README.md", encoding="utf-8") as file:
     readme = file.read()
 
 setup(
-    name="minio-extensions",
+    name="minio_extensions",
     description="MinIO Python Extension Package for S3 Storage Operations",
     author="Christian Celso Bewzenko",
     url="https://github.com/chrisbewz/minio-extensions",
@@ -28,8 +28,7 @@ setup(
     long_description_content_type="text/markdown",
     package_dir={"minio_extensions": "./minio_extensions"},
     packages=[
-        "minio_extensions",
-        "minio_extensions.metadata"
+        "minio_extensions"
     ],
     install_requires=[
         "minio",
@@ -37,7 +36,8 @@ setup(
         "pydantic",
         "typing",
         "typing-extensions",
-        "python-dotenv"
+        "python-dotenv",
+        "annotated-types"
         ],
     tests_require=[],
     license="Apache-2.0",
@@ -54,7 +54,8 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    keywords = ['minio', 'minio-extensions'],
     long_description=readme,
     package_data={"": ["LICENSE", "README.md"]},
-    include_package_data=True,
+    include_package_data=True
 )

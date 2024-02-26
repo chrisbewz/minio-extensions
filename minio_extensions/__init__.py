@@ -15,4 +15,4 @@ __all__ = [
     "TagMetadata"
 ]
 
-__version__ = "1.0.0"
+__version__ = "0.1.1"
