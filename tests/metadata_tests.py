@@ -1,12 +1,13 @@
+import os
 import unittest
-import os, sys
+
 
 class MinioObjectMetadataTests(unittest.TestCase):
-    from minio_extensions.extensions import MinioExtensions
     from minio import Minio
-    _client : Minio = None
+    _client: Minio = None
     SAMPLE_FILE_NAME = "sample_test.txt"
     bucket = None
+    
     def setUp(self):
         from dotenv import load_dotenv
         from minio_extensions.extensions import MinioExtensions
@@ -19,39 +20,49 @@ class MinioObjectMetadataTests(unittest.TestCase):
             txtf.write("hello\n")
             txtf.write("world")
         return file_path_generated
-        
+    
     def test_object_metadata_tag_equality_should_not_throw(self):
         try:
-            from minio_extensions.metadata.constants import INITIAL_VERSION, TEST_TAG, PREVIEW_TAG
-            from minio_extensions.metadata import ObjectMetadata, TagMetadata, VersionMetadata, ContentType, \
+            from minio_extensions import ObjectMetadata, TagMetadata, VersionMetadata, \
                 ObjectMetadataInfo
             from minio_extensions.extensions import MinioExtensions
+            from minio_extensions.metadata.constants import Text
             from minio_extensions.environment import MINIO_S3_DEFAULT_BUCKET_NAME
             
             path_gen = self._gen_dummy_txt_file("./")
             
             local_path = os.path.abspath(path_gen)
             file_metadata = ObjectMetadata(
-                version = INITIAL_VERSION,
+                version = VersionMetadata(
+                    major = 1,
+                    minor = 0,
+                    revision = 0
+                ),
                 tags = [
-                    TEST_TAG,
-                    PREVIEW_TAG
+                    TagMetadata(
+                        name = "kind",
+                        content = "test"
+                    ),
+                    TagMetadata(
+                        name = "kind",
+                        content = "preview"
+                    )
                 ])
             
             self.bucket = MINIO_S3_DEFAULT_BUCKET_NAME.get() if not MINIO_S3_DEFAULT_BUCKET_NAME is None else 'sample_bucket'
             
-            if not MinioExtensions.check_bucket_exists(client=self._client, bucket=self.bucket):
+            if not MinioExtensions.check_bucket_exists(client = self._client, bucket = self.bucket):
                 self._client.make_bucket(self.bucket)
-                
+            
             MinioExtensions.upload_object(
                 client = self._client,
                 bucket = self.bucket,
                 object_name = self.SAMPLE_FILE_NAME,
                 local_path = local_path,
-                content_type = ContentType.TXT.value,
+                content_type = Text,
                 metadata = file_metadata
             )
-            meta = MinioExtensions.get_object_metadata(client=self._client,
+            meta = MinioExtensions.get_object_metadata(client = self._client,
                                                        bucket = self.bucket,
                                                        object_name = self.SAMPLE_FILE_NAME)
             
@@ -64,14 +75,17 @@ class MinioObjectMetadataTests(unittest.TestCase):
             raise
         
         finally:
-            self._client.remove_object(bucket_name=self.bucket, 
-                                       object_name=self.SAMPLE_FILE_NAME)
+            self._client.remove_object(bucket_name = self.bucket,
+                                       object_name = self.SAMPLE_FILE_NAME)
     
     def test_model_metadata_version_reading_equality_should_not_throw(self):
+        from minio_extensions import ObjectMetadata, TagMetadata, VersionMetadata, \
+            ObjectMetadataInfo
+        from minio_extensions.extensions import MinioExtensions
+        from minio_extensions.metadata.constants import Text
+        from minio_extensions.environment import MINIO_S3_DEFAULT_BUCKET_NAME
         
         try:
-            from minio_extensions.metadata import ObjectMetadata, TagMetadata, VersionMetadata, ContentType, \
-                ObjectMetadataInfo
             
             path_gen = self._gen_dummy_txt_file("./")
             
@@ -83,15 +97,17 @@ class MinioObjectMetadataTests(unittest.TestCase):
                         name = "kind", content = "test"
                     )])
             
-            self._provider.upload_object(
+            MinioExtensions.upload_object(
+                client = self._client,
                 bucket = self.bucket,
                 object_name = self.SAMPLE_FILE_NAME,
                 local_path = local_path,
-                content_type = ContentType.TXT.value,
+                content_type = Text,
                 metadata = file_metadata
             )
-            meta = self._provider.get_object_metadata(bucket = self.bucket,
-                                                      object_name = self.SAMPLE_FILE_NAME)
+            meta = MinioExtensions.get_object_metadata(client = self._client,
+                                                       bucket = self.bucket,
+                                                       object_name = self.SAMPLE_FILE_NAME)
             model = ObjectMetadataInfo.from_meta(meta)
             
             # Asserting uploaded file metadata equality
@@ -99,8 +115,9 @@ class MinioObjectMetadataTests(unittest.TestCase):
         except:
             raise
         finally:
-            self._provider.instance.remove_object(os.getenv("DEVELOPMENT_DATABASE_MINIO_BUCKET_NAME"), self.SAMPLE_FILE_NAME)
-            
+            self._client.remove_object(MINIO_S3_DEFAULT_BUCKET_NAME.get(),
+                                       self.SAMPLE_FILE_NAME)
+
 
 if __name__ == '__main__':
     unittest.main()

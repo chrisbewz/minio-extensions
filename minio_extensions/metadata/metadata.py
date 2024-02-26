@@ -8,7 +8,7 @@ from minio.commonconfig import Tags
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
-from minio_extensions.metadata.constants import(
+from minio_extensions.metadata.constants import (
     USER_META_VERSION_ATT,
     OBJECT_META_ETAG_ATT,
     OBJECT_META_CONTENT_LENGTH_ATT,
@@ -21,10 +21,11 @@ from minio_extensions.metadata.constants import(
 
 from minio_extensions._typing import PosInt
 
-T = TypeVar('T', bound="Tags")
-TT = TypeVar('TT', bound="TagMetadata")
+T = TypeVar('T', bound = "Tags")
+TT = TypeVar('TT', bound = "TagMetadata")
 TagLike = Union[T, TT]
 TagLikeArray = List[TagLike]
+
 
 class VersionMetadata(BaseModel):
     """
@@ -34,10 +35,10 @@ class VersionMetadata(BaseModel):
     major: PosInt = Field(1, alias = "major")
     """Major version of the file"""
     
-    minor: Optional[PosInt] = Field(0, alias="minor")
+    minor: Optional[PosInt] = Field(0, alias = "minor")
     """Minor version of the file"""
     
-    revision: Optional[PosInt] = Field(0,alias="revision")
+    revision: Optional[PosInt] = Field(0, alias = "revision")
     """Revision of the file"""
 
 
@@ -61,7 +62,7 @@ class TagMetadata(BaseModel):
         return cast(Type[TT], obj)
     
     @classmethod
-    def from_dict(cls: Type [TT], data: Dict[str, Any]) -> Union[TagLike, TagLikeArray]:
+    def from_dict(cls: Type[TT], data: Dict[str, Any]) -> Union[TagLike, TagLikeArray]:
         if not len(data) > 0:
             return None
         
@@ -96,17 +97,18 @@ class TagMetadata(BaseModel):
                     warnings.warn(f"Warning: Element {m} is not of type {cls.__name__}. Skipping...")
                     continue
                 
-                if not m.name in _tag.keys():
+                if m.name not in _tag.keys():
                     _tag[m.name] = m.content
                 
                 if (m.name, m.content) in _tag.keys():
                     raise ValueError(f"Element {m} is already present on tags list")
-    
-                if not duplicate_options in ["preserve", "first", "last", "append"]:
+                
+                if duplicate_options not in ["preserve", "first", "last", "append"]:
                     raise ValueError("The parameter errors must be either 'raise', first, 'last' append")
                 
-                if duplicate_options == "raise" and len(set(m.name.keys())) < len(m.name.keys()):
-                    raise ValueError("Duplicate tag names found on provided list. First occurrence: {index} -> {m.name}")
+                if duplicate_options == "raise" and len(set(_tag.keys())) < len(_tag.keys()):
+                    raise ValueError(
+                        "Duplicate tag names found on provided list. First occurrence: {index} -> {m.name}")
                 
                 continue
         else:

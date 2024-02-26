@@ -1,5 +1,6 @@
 from typing import Literal
 
+
 # Some of minio metadata attributes returned when searching for objects metadata
 # in calls to methods like stat_object()
 USER_META_VERSION_ATT = 'x-amz-meta-version'
@@ -18,5 +19,5 @@ CsvLike = Literal["application/csv", "text/csv"]
 Text = "application/octet-stream"
 Spreadsheet = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 MacroEnabledSpreadSheet = "application/vnd.ms-excel.sheet.macroenabled.12"
-Zipped= "application/x-zip-compressed"
+Zipped = "application/x-zip-compressed"
 Json = "application/json"

@@ -1,12 +1,3 @@
-__all__ = [
-    "MinioProvider",
-    "MinioExtensions",
-]
-
-from .providers import (
-    MinioProvider
-)
-
 from .metadata.metadata import (
     ObjectMetadata,
     ObjectMetadataInfo,
@@ -15,5 +6,13 @@ from .metadata.metadata import (
 )
 
 from .extensions import MinioExtensions
+
+__all__ = [
+    "MinioExtensions",
+    "VersionMetadata",
+    "ObjectMetadata",
+    "ObjectMetadataInfo",
+    "TagMetadata"
+]
 
 __version__ = "1.0.0"
