@@ -243,11 +243,9 @@ class MinioExtensions:
     
     @staticmethod
     def create_provider(creation_options: ConfigurationOptions = "env"):
-        import os
         import dotenv as de
         de.load_dotenv()
-        builder = ClientBuilder(creation_options = creation_options)
-        
+        builder = ClientBuilder(creation_options = creation_options, is_proxy_conn = False)
         return builder.configure()
     
     @staticmethod
