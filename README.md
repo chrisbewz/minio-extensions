@@ -1,6 +1,6 @@
 # minio-extensions
 
-## Install the MinIO Python SDK
+## Install the MinIO Extensions Package
 
 The Python SDK requires Python version 3.8+.
 You can install the SDK with `pip` or from the [`minio-extensions` GitHub repository](https://github.com/chrisbewz/minio-extensions):
