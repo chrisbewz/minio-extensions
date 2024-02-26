@@ -7,7 +7,7 @@ from setuptools import setup
 if sys.argv[-1] == "publish":
     sys.argv = sys.argv[:-1] + ["sdist", "upload"]
 
-with codecs.open("minio_extensions/__init__.py") as file:
+with codecs.open("./minio_extensions/__init__.py") as file:
     version = re.search(
         r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
         file.read(),
@@ -21,8 +21,8 @@ setup(
     name="minio-extensions",
     description="MinIO Python Extension Package for S3 Storage Operations",
     author="Christian Celso Bewzenko",
-    url="https://github.com/minio/minio-py",
-    download_url="https://github.com/minio/minio-py/releases",
+    url="https://github.com/chrisbewz/minio-extensions",
+    #download_url="https://github.com/chrisbewz/minio-extensions/releases",
     author_email="crisbewz@gmail.com",
     version=version,
     long_description_content_type="text/markdown",
