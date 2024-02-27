@@ -22,7 +22,7 @@ client = builder.configure()
 
 # The same client can also be generated from environment through a direct call to MinioExtensions.create_provider()
 # In this case is not specified any arguments since it already considers the "env" as default option.
-client = MinioExtensions.create_provider()
+#client = MinioExtensions.create_provider()
 
 print(client.bucket_exists("sample-bucket"))
 
