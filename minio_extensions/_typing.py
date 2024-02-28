@@ -20,7 +20,7 @@ PosInt = Annotated[int, Ge(0)]
 IntStr = Union[PosInt, str]
 
 # Object tagging dupplicate handling options
-TagDuplicateOptions = Literal["raise", "first", "last", "append"]
+TagDuplicateOptions = Literal["raise", "preserve", "append"]
 
 # Object versioning handling options
 VersionLike = Union[Literal["first","latest"], "IntStr"]

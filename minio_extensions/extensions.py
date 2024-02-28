@@ -283,7 +283,7 @@ class MinioExtensions:
         tags = client.get_object_tags(bucket_name = bucket, object_name = object_name, version_id = version_id)
         
         dict_meta = dict(zip(meta.metadata.keys(), meta.metadata.values()))
-        dict_meta["tags"] = tags
+        dict_meta["tags"] = tags if not tags is None else {}
         return dict_meta
     
     @staticmethod

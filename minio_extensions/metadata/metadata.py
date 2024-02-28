@@ -81,7 +81,8 @@ class TagMetadata(BaseModel):
     def as_tag(cls,
                metadata: Optional[Union[List[TT], TT]],
                duplicate_options: Optional['TagDuplicateOptions'] = "raise",
-               duplicates_prefix: Optional[str] = "n") -> Type[T]:
+               duplicates_prefix: Optional[str] = "_",
+               separator: Optional[str] = "-") -> Type[T]:
         """
         Convert TagMetadata objects to a Tags object.
         """
@@ -103,14 +104,31 @@ class TagMetadata(BaseModel):
                 if (m.name, m.content) in _tag.keys():
                     raise ValueError(f"Element {m} is already present on tags list")
                 
-                if duplicate_options not in ["preserve", "first", "last", "append"]:
-                    raise ValueError("The parameter errors must be either 'raise', first, 'last' append")
+                if duplicate_options not in ["raise", "preserve", "append"]:
+                    raise ValueError("The parameter errors must be either 'raise', 'preserve' or append")
                 
                 if duplicate_options == "raise" and len(set(_tag.keys())) < len(_tag.keys()):
                     raise ValueError(
                         "Duplicate tag names found on provided list. First occurrence: {index} -> {m.name}")
                 
-                continue
+                if duplicate_options == "append":
+                    if m.name in _tag:
+                        _tag[m.name] = f"{_tag[m.name]}{separator}{m.content}"
+                    else:
+                        _tag[m.name] = m.content
+                    
+                    continue
+                
+                repetitions = 0
+                new_name = m.name
+                
+                while m.name in _tag:
+                    repetitions += 1
+                    new_name = f"{m.name}_{repetitions}"
+                    
+                _tag[new_name] = m.content
+                
+
         else:
             if not isinstance(metadata, cls):
                 warnings.warn(f"Warning: Element {metadata} is not of type {cls.__name__}. Skipping...")
@@ -135,7 +153,6 @@ class ObjectMetadataInfo(BaseModel):
     content_type: Optional[str] = None
     last_modified: Optional[datetime.datetime] = None
     id: Optional[Union[str, uuid.UUID]] = None
-    version: Optional[VersionMetadata] = None
     tags: Optional[List[TagMetadata]] = None
     
     @classmethod
@@ -146,7 +163,6 @@ class ObjectMetadataInfo(BaseModel):
         data_dict["content_type"] = cls._get_meta_content_type(metadata)
         data_dict["last_modified"] = cls._get_meta_last_modified_date(metadata)
         data_dict["id"] = cls._get_meta_version_id(metadata)
-        data_dict["version"] = VersionMetadata.parse_obj(cls._get_meta_version(metadata))
         
         return ObjectMetadataInfo.model_construct(**data_dict)
     
@@ -164,14 +180,6 @@ class ObjectMetadataInfo(BaseModel):
     def _get_meta_version_id(metadata: Dict[str, Any]):
         if OBJECT_META_VERSION_ATT in metadata.keys():
             return metadata[OBJECT_META_VERSION_ATT]
-    
-    @staticmethod
-    def _get_meta_version(metadata: Dict[str, Any]):
-        if USER_META_VERSION_ATT in metadata.keys():
-            meta_version: str = metadata[USER_META_VERSION_ATT]
-            parsed_meta_version = json.loads(meta_version.replace("'", "\""))
-            generated = VersionMetadata(**parsed_meta_version)
-            return generated
     
     @staticmethod
     def _get_meta_content_type(metadata: Dict[str, Any]):
